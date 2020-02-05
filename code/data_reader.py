@@ -113,6 +113,8 @@ class DataReader:
         @return: The cleaned string.
         """
         string = string.lower()  # lowercase
+        string = string.replace('<br>', '.')
+        string = string.replace('---', '')
 
         clean_words = []
         for word in string.split():
@@ -131,4 +133,3 @@ class DataReader:
             clean_words.append(word)
 
         return ' '.join(clean_words)
-

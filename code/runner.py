@@ -57,7 +57,8 @@ class LyricGenRunner:
         """
         Runs a training loop on the model.
         """
-        while True:
+        keep_training = True
+        while keep_training:
             inputs, targets = self.data_reader.get_train_batch(c.BATCH_SIZE, c.SEQ_LEN)
             print 'Training model...'
 
@@ -67,20 +68,25 @@ class LyricGenRunner:
                                                   self.model.train_op],
                                                  feed_dict=feed_dict)
 
+            if global_step == c.MAX_STEPS:
+                keep_training = False
+
             print 'Step: %d | loss: %f' % (global_step, loss)
-            if global_step % c.MODEL_SAVE_FREQ == 0:
+            if global_step % c.MODEL_SAVE_FREQ == 0 or not keep_training:
                 print 'Saving model...'
                 self.saver.save(self.sess, join(c.MODEL_SAVE_DIR, self.artist_name + '.ckpt'),
                                 global_step=global_step)
+
 
     def test(self, prime_text):
         """
         Generates a text sequence.
         """
         # generate and save sample sequence
-        sample = self.model.generate(prime=prime_text)
+        sample = self.model.generate(prime=prime_text, num_out=200).replace('.', '.\n').replace(',', ',\n ')
 
         print sample
+
 
 def main():
     load_path = None
