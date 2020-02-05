@@ -100,3 +100,5 @@ completed_artists.txt
 # Node JS
 node_modules/
 
+
+save/models/*
